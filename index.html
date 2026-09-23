@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
     <title>My Messenger</title>
 
@@ -19,13 +20,19 @@
 
     <div class="auth-container">
 
-        <h1>💬 My Messenger</h1>
+        <div class="logo">💬</div>
+
+        <h1>My Messenger</h1>
 
         <!-- LOGIN -->
 
         <div id="loginBox">
 
-            <h2>Login</h2>
+            <h2>Welcome Back</h2>
+
+            <p class="auth-subtitle">
+                Login to continue chatting
+            </p>
 
             <input
                 id="loginEmail"
@@ -39,18 +46,19 @@
                 placeholder="Password"
             >
 
-            <button onclick="login()">
+            <button
+                class="primary-btn"
+                onclick="login()"
+            >
                 Login
             </button>
 
-            <p id="loginMessage"></p>
+            <p id="loginMessage"
+               class="error-message"></p>
 
-            <p>
+            <p class="switch-text">
                 Don't have an account?
-                <span
-                    class="link"
-                    onclick="showRegister()"
-                >
+                <span onclick="showRegister()">
                     Create Account
                 </span>
             </p>
@@ -60,12 +68,14 @@
 
         <!-- REGISTER -->
 
-        <div
-            id="registerBox"
-            class="hidden"
-        >
+        <div id="registerBox"
+             class="hidden">
 
             <h2>Create Account</h2>
+
+            <p class="auth-subtitle">
+                Create your messenger account
+            </p>
 
             <input
                 id="registerUsername"
@@ -91,18 +101,19 @@
                 placeholder="Password"
             >
 
-            <button onclick="register()">
+            <button
+                class="primary-btn"
+                onclick="register()"
+            >
                 Create Account
             </button>
 
-            <p id="registerMessage"></p>
+            <p id="registerMessage"
+               class="error-message"></p>
 
-            <p>
+            <p class="switch-text">
                 Already have an account?
-                <span
-                    class="link"
-                    onclick="showLogin()"
-                >
+                <span onclick="showLogin()">
                     Login
                 </span>
             </p>
@@ -116,22 +127,23 @@
 
 <!-- ================= MESSENGER ================= -->
 
-<div
-    id="messengerPage"
-    class="hidden"
->
+<div id="messengerPage"
+     class="hidden">
 
-    <!-- SIDEBAR -->
+
+    <!-- ================= FRIENDS SIDEBAR ================= -->
 
     <aside class="sidebar">
 
+        <!-- PROFILE -->
+
         <div class="profile">
 
-            <div class="big-avatar">
+            <div class="profile-avatar">
                 👤
             </div>
 
-            <div>
+            <div class="profile-info">
 
                 <h3>My Messenger</h3>
 
@@ -144,35 +156,49 @@
         </div>
 
 
-        <div class="sidebar-buttons">
+        <!-- ACTION BUTTONS -->
+
+        <div class="action-buttons">
 
             <button onclick="openAddFriend()">
                 ➕ Add Friend
             </button>
 
             <button onclick="openRequests()">
-                📩 Friend Requests
+                📩 Requests
             </button>
 
-            <button onclick="logout()">
-                🚪 Logout
+            <button
+                class="logout-btn"
+                onclick="logout()"
+            >
+                🚪
             </button>
 
         </div>
 
 
-        <input
-            id="friendSearch"
-            class="search"
-            type="text"
-            placeholder="Search friends..."
-        >
+        <!-- SEARCH -->
+
+        <div class="search-box">
+
+            <span>🔍</span>
+
+            <input
+                id="friendSearch"
+                type="text"
+                placeholder="Search friends..."
+            >
+
+        </div>
 
 
-        <h3 class="friends-title">
+        <div class="section-title">
             FRIENDS
-        </h3>
+        </div>
 
+
+        <!-- FRIENDS -->
 
         <div id="friendsList">
 
@@ -185,22 +211,20 @@
     </aside>
 
 
-    <!-- CHAT -->
+    <!-- ================= CHAT ================= -->
 
     <main class="chat">
 
         <!-- WELCOME -->
 
-        <div
-            id="welcomeChat"
-            class="welcome"
-        >
+        <div id="welcomeChat"
+             class="welcome">
 
             <div class="welcome-icon">
                 💬
             </div>
 
-            <h1>Welcome to My Messenger</h1>
+            <h1>Your Messages</h1>
 
             <p>
                 Select a friend to start chatting.
@@ -211,16 +235,21 @@
 
         <!-- CHAT HEADER -->
 
-        <div
-            id="chatHeader"
-            class="chat-header hidden"
-        >
+        <div id="chatHeader"
+             class="chat-header hidden">
+
+            <button
+                class="back-btn"
+                onclick="closeMobileChat()"
+            >
+                ←
+            </button>
 
             <div class="chat-avatar">
                 👤
             </div>
 
-            <div>
+            <div class="chat-user-info">
 
                 <h3 id="chatFriendName">
                     Friend
@@ -237,23 +266,20 @@
 
         <!-- MESSAGES -->
 
-        <div
-            id="messages"
-            class="messages hidden"
-        ></div>
+        <div id="messages"
+             class="messages hidden">
+        </div>
 
 
-        <!-- MESSAGE BOX -->
+        <!-- MESSAGE INPUT -->
 
-        <div
-            id="messageBox"
-            class="message-box hidden"
-        >
+        <div id="messageBox"
+             class="message-box hidden">
 
             <input
                 id="messageInput"
                 type="text"
-                placeholder="Type a message..."
+                placeholder="Write a message..."
             >
 
             <button onclick="sendMessage()">
@@ -267,62 +293,74 @@
 </div>
 
 
-<!-- ================= ADD FRIEND MODAL ================= -->
+<!-- ================= ADD FRIEND ================= -->
 
-<div
-    id="addFriendModal"
-    class="modal hidden"
->
+<div id="addFriendModal"
+     class="modal hidden">
 
     <div class="modal-box">
 
-        <h2>➕ Add Friend</h2>
+        <div class="modal-header">
+
+            <h2>➕ Add Friend</h2>
+
+            <button
+                onclick="closeAddFriend()"
+                class="modal-close"
+            >
+                ×
+            </button>
+
+        </div>
+
+        <p class="modal-description">
+            Enter your friend's username.
+        </p>
 
         <input
             id="friendUsername"
             type="text"
-            placeholder="Enter username"
+            placeholder="Username"
         >
 
-        <button onclick="addFriend()">
+        <button
+            class="primary-btn"
+            onclick="addFriend()"
+        >
             Send Friend Request
         </button>
 
-        <p id="friendMessage"></p>
-
-        <button
-            class="close-button"
-            onclick="closeAddFriend()"
-        >
-            Close
-        </button>
+        <p id="friendMessage"
+           class="modal-message"></p>
 
     </div>
 
 </div>
 
 
-<!-- ================= REQUEST MODAL ================= -->
+<!-- ================= REQUESTS ================= -->
 
-<div
-    id="requestsModal"
-    class="modal hidden"
->
+<div id="requestsModal"
+     class="modal hidden">
 
     <div class="modal-box">
 
-        <h2>📩 Friend Requests</h2>
+        <div class="modal-header">
+
+            <h2>📩 Friend Requests</h2>
+
+            <button
+                onclick="closeRequests()"
+                class="modal-close"
+            >
+                ×
+            </button>
+
+        </div>
 
         <div id="requestsList">
             Loading...
         </div>
-
-        <button
-            class="close-button"
-            onclick="closeRequests()"
-        >
-            Close
-        </button>
 
     </div>
 
