@@ -16,10 +16,135 @@ const supabaseClient =
 
 
 let currentUser = null;
-
 let currentFriend = null;
-
 let messageChannel = null;
+
+
+// ==========================================
+// NOTIFICATIONS
+// ==========================================
+
+async function enableNotifications() {
+
+    if (!("Notification" in window)) {
+
+        console.log(
+            "Browser notifications are not supported."
+        );
+
+        return;
+    }
+
+
+    if (
+        Notification.permission ===
+        "default"
+    ) {
+
+        try {
+
+            const permission =
+                await Notification.requestPermission();
+
+            console.log(
+                "Notification permission:",
+                permission
+            );
+
+        } catch (error) {
+
+            console.log(
+                "Notification permission error:",
+                error
+            );
+
+        }
+
+    }
+
+}
+
+
+function showMessageNotification(
+    senderName,
+    messageText
+) {
+
+    // Play notification sound
+
+    const sound =
+        document.getElementById(
+            "notificationSound"
+        );
+
+
+    if (sound) {
+
+        sound.currentTime = 0;
+
+        sound.play().catch(
+            function(error) {
+
+                console.log(
+                    "Notification sound could not play:",
+                    error
+                );
+
+            }
+        );
+
+    }
+
+
+    // Browser notification
+
+    if (
+        "Notification" in window &&
+        Notification.permission ===
+        "granted"
+    ) {
+
+        try {
+
+            const notification =
+                new Notification(
+                    "New message from " +
+                    senderName,
+                    {
+                        body:
+                            messageText,
+
+                        icon:
+                            "https://cdn-icons-png.flaticon.com/512/733/733585.png",
+
+                        tag:
+                            "messenger-message"
+                    }
+                );
+
+
+            notification.onclick =
+                function() {
+
+                    window.focus();
+
+                    notification.close();
+
+                };
+
+
+        } catch (error) {
+
+            console.log(
+                "Notification error:",
+                error
+            );
+
+        }
+
+    }
+
+}
 
 
 // ==========================================
@@ -31,6 +156,7 @@ function showRegister() {
     document
         .getElementById("loginBox")
         .classList.add("hidden");
+
 
     document
         .getElementById("registerBox")
@@ -44,6 +170,7 @@ function showLogin() {
     document
         .getElementById("registerBox")
         .classList.add("hidden");
+
 
     document
         .getElementById("loginBox")
@@ -60,27 +187,39 @@ async function register() {
 
     const username =
         document
-            .getElementById("registerUsername")
+            .getElementById(
+                "registerUsername"
+            )
             .value
             .trim()
             .toLowerCase();
 
+
     const fullName =
         document
-            .getElementById("registerFullName")
+            .getElementById(
+                "registerFullName"
+            )
             .value
             .trim();
+
 
     const email =
         document
-            .getElementById("registerEmail")
+            .getElementById(
+                "registerEmail"
+            )
             .value
             .trim();
 
+
     const password =
         document
-            .getElementById("registerPassword")
+            .getElementById(
+                "registerPassword"
+            )
             .value;
+
 
     const message =
         document.getElementById(
@@ -102,15 +241,19 @@ async function register() {
             "Please fill all fields.";
 
         return;
+
     }
 
 
-    if (password.length < 6) {
+    if (
+        password.length < 6
+    ) {
 
         message.innerText =
             "Password must be at least 6 characters.";
 
         return;
+
     }
 
 
@@ -125,7 +268,10 @@ async function register() {
         await supabaseClient
             .from("profiles")
             .select("id")
-            .eq("username", username)
+            .eq(
+                "username",
+                username
+            )
             .maybeSingle();
 
 
@@ -135,6 +281,7 @@ async function register() {
             usernameError.message;
 
         return;
+
     }
 
 
@@ -144,6 +291,7 @@ async function register() {
             "Username already exists.";
 
         return;
+
     }
 
 
@@ -155,13 +303,14 @@ async function register() {
         data,
         error
     } =
-        await supabaseClient.auth.signUp({
+        await supabaseClient.auth
+            .signUp({
 
-            email: email,
+                email: email,
 
-            password: password
+                password: password
 
-        });
+            });
 
 
     if (error) {
@@ -170,6 +319,7 @@ async function register() {
             error.message;
 
         return;
+
     }
 
 
@@ -179,12 +329,9 @@ async function register() {
             "Account could not be created.";
 
         return;
+
     }
 
-
-    /*
-       Create profile automatically.
-    */
 
     const {
         error: profileError
@@ -193,11 +340,14 @@ async function register() {
             .from("profiles")
             .insert({
 
-                id: data.user.id,
+                id:
+                    data.user.id,
 
-                username: username,
+                username:
+                    username,
 
-                full_name: fullName
+                full_name:
+                    fullName
 
             });
 
@@ -213,11 +363,13 @@ async function register() {
             profileError.message;
 
         return;
+
     }
 
 
     message.style.color =
         "#22a06b";
+
 
     message.innerText =
         "Account created successfully! 🎉";
@@ -229,17 +381,20 @@ async function register() {
         )
         .value = "";
 
+
     document
         .getElementById(
             "registerFullName"
         )
         .value = "";
 
+
     document
         .getElementById(
             "registerEmail"
         )
         .value = "";
+
 
     document
         .getElementById(
@@ -270,12 +425,14 @@ async function login() {
             .value
             .trim();
 
+
     const password =
         document
             .getElementById(
                 "loginPassword"
             )
             .value;
+
 
     const message =
         document.getElementById(
@@ -292,6 +449,7 @@ async function login() {
             "Enter email and password.";
 
         return;
+
     }
 
 
@@ -306,9 +464,11 @@ async function login() {
         await supabaseClient.auth
             .signInWithPassword({
 
-                email: email,
+                email:
+                    email,
 
-                password: password
+                password:
+                    password
 
             });
 
@@ -319,6 +479,7 @@ async function login() {
             error.message;
 
         return;
+
     }
 
 
@@ -341,19 +502,28 @@ async function openMessenger() {
         .getElementById(
             "authPage"
         )
-        .classList.add("hidden");
+        .classList.add(
+            "hidden"
+        );
 
 
     document
         .getElementById(
             "messengerPage"
         )
-        .classList.remove("hidden");
+        .classList.remove(
+            "hidden"
+        );
 
 
     await loadMyProfile();
 
     await loadFriends();
+
+
+    // Ask for notification permission
+
+    await enableNotifications();
 
 }
 
@@ -385,6 +555,7 @@ async function loadMyProfile() {
         console.error(error);
 
         return;
+
     }
 
 
@@ -393,7 +564,8 @@ async function loadMyProfile() {
             "myUsername"
         )
         .innerText =
-        "@" + data.username;
+        "@" +
+        data.username;
 
 }
 
@@ -411,36 +583,46 @@ async function logout() {
                 messageChannel
             );
 
-        messageChannel = null;
+        messageChannel =
+            null;
+
     }
 
 
-    await supabaseClient.auth.signOut();
+    await supabaseClient.auth
+        .signOut();
 
 
-    currentUser = null;
+    currentUser =
+        null;
 
-    currentFriend = null;
+
+    currentFriend =
+        null;
 
 
     document
         .getElementById(
             "messengerPage"
         )
-        .classList.add("hidden");
+        .classList.add(
+            "hidden"
+        );
 
 
     document
         .getElementById(
             "authPage"
         )
-        .classList.remove("hidden");
+        .classList.remove(
+            "hidden"
+        );
 
 }
 
 
 // ==========================================
-// SESSION
+// CHECK LOGIN SESSION
 // ==========================================
 
 async function checkLogin() {
@@ -489,7 +671,9 @@ async function loadFriends() {
     } =
         await supabaseClient
             .from("friendships")
-            .select("friend_id")
+            .select(
+                "friend_id"
+            )
             .eq(
                 "user_id",
                 currentUser.id
@@ -504,6 +688,7 @@ async function loadFriends() {
             '<p class="empty">Could not load friends.</p>';
 
         return;
+
     }
 
 
@@ -516,6 +701,7 @@ async function loadFriends() {
             '<p class="empty">No friends yet.<br>Add your first friend!</p>';
 
         return;
+
     }
 
 
@@ -561,23 +747,29 @@ async function loadFriends() {
         element.innerHTML = `
 
             <div class="avatar">
+
                 ${escapeHTML(
                     friend.username
                         .charAt(0)
                         .toUpperCase()
                 )}
+
             </div>
 
             <div>
 
                 <div class="friend-name">
+
                     ${escapeHTML(
                         friend.full_name
                     )}
+
                 </div>
 
                 <div class="friend-status">
+
                     ● Online
+
                 </div>
 
             </div>
@@ -588,7 +780,9 @@ async function loadFriends() {
         element.onclick =
             function() {
 
-                openChat(friend);
+                openChat(
+                    friend
+                );
 
             };
 
@@ -612,7 +806,9 @@ function openAddFriend() {
         .getElementById(
             "addFriendModal"
         )
-        .classList.remove("hidden");
+        .classList.remove(
+            "hidden"
+        );
 
 }
 
@@ -623,7 +819,9 @@ function closeAddFriend() {
         .getElementById(
             "addFriendModal"
         )
-        .classList.add("hidden");
+        .classList.add(
+            "hidden"
+        );
 
 }
 
@@ -641,7 +839,11 @@ async function addFriend() {
             )
             .value
             .trim()
-            .toLowerCase();
+            .toLowerCase()
+            .replace(
+                /^@/,
+                ""
+            );
 
 
     const message =
@@ -659,6 +861,7 @@ async function addFriend() {
             "Enter username.";
 
         return;
+
     }
 
 
@@ -684,6 +887,7 @@ async function addFriend() {
             error.message;
 
         return;
+
     }
 
 
@@ -693,17 +897,20 @@ async function addFriend() {
             "User not found.";
 
         return;
+
     }
 
 
     if (
-        friend.id === currentUser.id
+        friend.id ===
+        currentUser.id
     ) {
 
         message.innerText =
             "You cannot add yourself.";
 
         return;
+
     }
 
 
@@ -730,6 +937,7 @@ async function addFriend() {
             "You are already friends.";
 
         return;
+
     }
 
 
@@ -763,6 +971,7 @@ async function addFriend() {
                 "Request already sent.";
 
             return;
+
         }
 
     }
@@ -793,11 +1002,13 @@ async function addFriend() {
             requestError.message;
 
         return;
+
     }
 
 
     message.style.color =
         "#22a06b";
+
 
     message.innerText =
         "Friend request sent! 🎉";
@@ -815,7 +1026,9 @@ async function openRequests() {
         .getElementById(
             "requestsModal"
         )
-        .classList.remove("hidden");
+        .classList.remove(
+            "hidden"
+        );
 
 
     const requestsList =
@@ -853,6 +1066,7 @@ async function openRequests() {
             error.message;
 
         return;
+
     }
 
 
@@ -865,6 +1079,7 @@ async function openRequests() {
             '<p class="empty">No new requests.</p>';
 
         return;
+
     }
 
 
@@ -910,16 +1125,21 @@ async function openRequests() {
         item.innerHTML = `
 
             <strong>
+
                 ${escapeHTML(
                     sender.full_name
                 )}
+
             </strong>
 
             <p>
+
                 @${escapeHTML(
                     sender.username
                 )}
+
                 wants to be your friend.
+
             </p>
 
             <div class="request-buttons">
@@ -963,7 +1183,9 @@ function closeRequests() {
         .getElementById(
             "requestsModal"
         )
-        .classList.add("hidden");
+        .classList.add(
+            "hidden"
+        );
 
 }
 
@@ -976,10 +1198,6 @@ async function acceptRequest(
     requestId,
     senderId
 ) {
-
-    /*
-       Check whether friendship already exists.
-    */
 
     const {
         data: existing
@@ -1021,14 +1239,11 @@ async function acceptRequest(
             alert(error.message);
 
             return;
+
         }
 
     }
 
-
-    /*
-       Reverse friendship.
-    */
 
     const {
         data: reverse
@@ -1070,14 +1285,11 @@ async function acceptRequest(
             alert(error.message);
 
             return;
+
         }
 
     }
 
-
-    /*
-       Update request.
-    */
 
     const {
         error: updateError
@@ -1101,6 +1313,7 @@ async function acceptRequest(
         alert(updateError.message);
 
         return;
+
     }
 
 
@@ -1112,7 +1325,7 @@ async function acceptRequest(
 
 
 // ==========================================
-// REJECT
+// REJECT REQUEST
 // ==========================================
 
 async function rejectRequest(
@@ -1141,6 +1354,7 @@ async function rejectRequest(
         alert(error.message);
 
         return;
+
     }
 
 
@@ -1153,19 +1367,18 @@ async function rejectRequest(
 // OPEN CHAT
 // ==========================================
 
-async function openChat(friend) {
+async function openChat(
+    friend
+) {
 
     currentFriend =
         friend;
 
 
-    /*
-       MOBILE:
-       Open chat full screen.
-    */
-
     document
-        .querySelector(".chat")
+        .querySelector(
+            ".chat"
+        )
         .classList.add(
             "mobile-open"
         );
@@ -1175,28 +1388,36 @@ async function openChat(friend) {
         .getElementById(
             "welcomeChat"
         )
-        .classList.add("hidden");
+        .classList.add(
+            "hidden"
+        );
 
 
     document
         .getElementById(
             "chatHeader"
         )
-        .classList.remove("hidden");
+        .classList.remove(
+            "hidden"
+        );
 
 
     document
         .getElementById(
             "messages"
         )
-        .classList.remove("hidden");
+        .classList.remove(
+            "hidden"
+        );
 
 
     document
         .getElementById(
             "messageBox"
         )
-        .classList.remove("hidden");
+        .classList.remove(
+            "hidden"
+        );
 
 
     document
@@ -1229,7 +1450,9 @@ async function openChat(friend) {
 function closeMobileChat() {
 
     document
-        .querySelector(".chat")
+        .querySelector(
+            ".chat"
+        )
         .classList.remove(
             "mobile-open"
         );
@@ -1246,8 +1469,10 @@ function closeMobileChat() {
                 messageChannel
             );
 
+
         messageChannel =
             null;
+
     }
 
 }
@@ -1262,6 +1487,7 @@ async function loadMessages() {
     if (!currentFriend) {
 
         return;
+
     }
 
 
@@ -1290,7 +1516,8 @@ async function loadMessages() {
             .order(
                 "created_at",
                 {
-                    ascending: true
+                    ascending:
+                        true
                 }
             );
 
@@ -1303,6 +1530,7 @@ async function loadMessages() {
             '<p class="empty">Could not load messages.</p>';
 
         return;
+
     }
 
 
@@ -1318,6 +1546,7 @@ async function loadMessages() {
             '<p class="empty">No messages yet 👋</p>';
 
         return;
+
     }
 
 
@@ -1352,6 +1581,7 @@ function displayMessage(
     ) {
 
         return;
+
     }
 
 
@@ -1397,8 +1627,11 @@ function displayMessage(
         ).toLocaleTimeString(
             [],
             {
-                hour: "2-digit",
-                minute: "2-digit"
+                hour:
+                    "2-digit",
+
+                minute:
+                    "2-digit"
             }
         );
 
@@ -1417,7 +1650,9 @@ function displayMessage(
             margin-top:4px;
             font-size:10px;
         ">
+
             ${time}
+
         </small>
 
     `;
@@ -1444,6 +1679,7 @@ async function sendMessage() {
     if (!currentFriend) {
 
         return;
+
     }
 
 
@@ -1460,10 +1696,12 @@ async function sendMessage() {
     if (!text) {
 
         return;
+
     }
 
 
-    input.disabled = true;
+    input.disabled =
+        true;
 
 
     const {
@@ -1488,14 +1726,18 @@ async function sendMessage() {
             .single();
 
 
-    input.disabled = false;
+    input.disabled =
+        false;
 
 
     if (error) {
 
-        alert(error.message);
+        alert(
+            error.message
+        );
 
         return;
+
     }
 
 
@@ -1504,7 +1746,10 @@ async function sendMessage() {
     input.focus();
 
 
-    displayMessage(data);
+    displayMessage(
+        data
+    );
+
 
     scrollMessages();
 
@@ -1520,9 +1765,14 @@ document.addEventListener(
     function(event) {
 
         if (
-            event.key === "Enter" &&
-            document.activeElement.id ===
+
+            event.key ===
+            "Enter" &&
+
+            document.activeElement
+                .id ===
             "messageInput"
+
         ) {
 
             event.preventDefault();
@@ -1536,7 +1786,7 @@ document.addEventListener(
 
 
 // ==========================================
-// REALTIME
+// REALTIME MESSAGES
 // ==========================================
 
 function subscribeToMessages() {
@@ -1560,36 +1810,55 @@ function subscribeToMessages() {
                 currentFriend.id
             )
             .on(
+
                 "postgres_changes",
+
                 {
-                    event: "INSERT",
-                    schema: "public",
-                    table: "messages"
+                    event:
+                        "INSERT",
+
+                    schema:
+                        "public",
+
+                    table:
+                        "messages"
                 },
-                function(payload) {
+
+                async function(payload) {
 
                     const message =
                         payload.new;
 
 
+                    if (!currentFriend) {
+
+                        return;
+
+                    }
+
+
                     const belongsToChat =
 
                         (
+
                             message.sender_id ===
                             currentUser.id &&
 
                             message.receiver_id ===
                             currentFriend.id
+
                         )
 
                         ||
 
                         (
+
                             message.sender_id ===
                             currentFriend.id &&
 
                             message.receiver_id ===
                             currentUser.id
+
                         );
 
 
@@ -1597,15 +1866,66 @@ function subscribeToMessages() {
                         belongsToChat
                     ) {
 
+                        /*
+                           Display message
+                        */
+
                         displayMessage(
                             message
                         );
 
+
                         scrollMessages();
+
+
+                        /*
+                           Notification only when
+                           message is from friend
+                        */
+
+                        if (
+
+                            message.sender_id !==
+                            currentUser.id
+
+                        ) {
+
+                            const {
+                                data: sender
+                            } =
+                                await supabaseClient
+                                    .from(
+                                        "profiles"
+                                    )
+                                    .select(
+                                        "full_name, username"
+                                    )
+                                    .eq(
+                                        "id",
+                                        message.sender_id
+                                    )
+                                    .single();
+
+
+                            if (sender) {
+
+                                showMessageNotification(
+
+                                    sender.full_name ||
+                                    "Friend",
+
+                                    message.message
+
+                                );
+
+                            }
+
+                        }
 
                     }
 
                 }
+
             )
             .subscribe();
 
@@ -1613,7 +1933,7 @@ function subscribeToMessages() {
 
 
 // ==========================================
-// SCROLL
+// SCROLL MESSAGES
 // ==========================================
 
 function scrollMessages() {
@@ -1669,10 +1989,13 @@ document
 
 
                     friend.style.display =
+
                         name.includes(
                             search
                         )
+
                             ? "flex"
+
                             : "none";
 
                 }
@@ -1683,10 +2006,12 @@ document
 
 
 // ==========================================
-// SECURITY
+// ESCAPE HTML
 // ==========================================
 
-function escapeHTML(text) {
+function escapeHTML(
+    text
+) {
 
     const div =
         document.createElement(
