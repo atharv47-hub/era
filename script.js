@@ -1,6 +1,6 @@
-// ==================================================
+// ==========================================
 // SUPABASE
-// ==================================================
+// ==========================================
 
 const SUPABASE_URL =
     "https://yyxbvbbrvxamuepbnvun.supabase.co";
@@ -22,9 +22,9 @@ let currentFriend = null;
 let messageChannel = null;
 
 
-// ==================================================
-// AUTH PAGE
-// ==================================================
+// ==========================================
+// AUTH SCREEN
+// ==========================================
 
 function showRegister() {
 
@@ -52,9 +52,9 @@ function showLogin() {
 }
 
 
-// ==================================================
+// ==========================================
 // REGISTER
-// ==================================================
+// ==========================================
 
 async function register() {
 
@@ -62,7 +62,8 @@ async function register() {
         document
             .getElementById("registerUsername")
             .value
-            .trim();
+            .trim()
+            .toLowerCase();
 
     const fullName =
         document
@@ -85,6 +86,9 @@ async function register() {
         document.getElementById(
             "registerMessage"
         );
+
+
+    message.innerText = "";
 
 
     if (
@@ -114,9 +118,10 @@ async function register() {
         "Checking username...";
 
 
-    // Check username
-
-    const { data: existingUser, error: usernameError } =
+    const {
+        data: existingUser,
+        error: usernameError
+    } =
         await supabaseClient
             .from("profiles")
             .select("id")
@@ -146,9 +151,10 @@ async function register() {
         "Creating account...";
 
 
-    // Create Auth user
-
-    const { data, error } =
+    const {
+        data,
+        error
+    } =
         await supabaseClient.auth.signUp({
 
             email: email,
@@ -176,13 +182,13 @@ async function register() {
     }
 
 
-    // IMPORTANT
-    // If email confirmation is disabled,
-    // the user is authenticated immediately.
+    /*
+       Create profile automatically.
+    */
 
-    // Create profile
-
-    const { error: profileError } =
+    const {
+        error: profileError
+    } =
         await supabaseClient
             .from("profiles")
             .insert({
@@ -198,7 +204,9 @@ async function register() {
 
     if (profileError) {
 
-        console.error(profileError);
+        console.error(
+            profileError
+        );
 
         message.innerText =
             "Account created but profile failed: " +
@@ -208,57 +216,74 @@ async function register() {
     }
 
 
+    message.style.color =
+        "#22a06b";
+
     message.innerText =
         "Account created successfully! 🎉";
 
 
     document
-        .getElementById("registerUsername")
+        .getElementById(
+            "registerUsername"
+        )
         .value = "";
 
     document
-        .getElementById("registerFullName")
+        .getElementById(
+            "registerFullName"
+        )
         .value = "";
 
     document
-        .getElementById("registerEmail")
+        .getElementById(
+            "registerEmail"
+        )
         .value = "";
 
     document
-        .getElementById("registerPassword")
+        .getElementById(
+            "registerPassword"
+        )
         .value = "";
 
 
-    setTimeout(() => {
-
-        showLogin();
-
-    }, 1500);
+    setTimeout(
+        showLogin,
+        1500
+    );
 
 }
 
 
-// ==================================================
+// ==========================================
 // LOGIN
-// ==================================================
+// ==========================================
 
 async function login() {
 
     const email =
         document
-            .getElementById("loginEmail")
+            .getElementById(
+                "loginEmail"
+            )
             .value
             .trim();
 
     const password =
         document
-            .getElementById("loginPassword")
+            .getElementById(
+                "loginPassword"
+            )
             .value;
 
     const message =
         document.getElementById(
             "loginMessage"
         );
+
+
+    message.innerText = "";
 
 
     if (!email || !password) {
@@ -274,7 +299,10 @@ async function login() {
         "Logging in...";
 
 
-    const { data, error } =
+    const {
+        data,
+        error
+    } =
         await supabaseClient.auth
             .signInWithPassword({
 
@@ -303,18 +331,23 @@ async function login() {
 }
 
 
-// ==================================================
+// ==========================================
 // OPEN MESSENGER
-// ==================================================
+// ==========================================
 
 async function openMessenger() {
 
     document
-        .getElementById("authPage")
+        .getElementById(
+            "authPage"
+        )
         .classList.add("hidden");
 
+
     document
-        .getElementById("messengerPage")
+        .getElementById(
+            "messengerPage"
+        )
         .classList.remove("hidden");
 
 
@@ -325,13 +358,16 @@ async function openMessenger() {
 }
 
 
-// ==================================================
-// LOAD MY PROFILE
-// ==================================================
+// ==========================================
+// MY PROFILE
+// ==========================================
 
 async function loadMyProfile() {
 
-    const { data, error } =
+    const {
+        data,
+        error
+    } =
         await supabaseClient
             .from("profiles")
             .select(
@@ -353,16 +389,18 @@ async function loadMyProfile() {
 
 
     document
-        .getElementById("myUsername")
+        .getElementById(
+            "myUsername"
+        )
         .innerText =
         "@" + data.username;
 
 }
 
 
-// ==================================================
+// ==========================================
 // LOGOUT
-// ==================================================
+// ==========================================
 
 async function logout() {
 
@@ -386,24 +424,30 @@ async function logout() {
 
 
     document
-        .getElementById("messengerPage")
+        .getElementById(
+            "messengerPage"
+        )
         .classList.add("hidden");
 
 
     document
-        .getElementById("authPage")
+        .getElementById(
+            "authPage"
+        )
         .classList.remove("hidden");
 
 }
 
 
-// ==================================================
-// CHECK SESSION
-// ==================================================
+// ==========================================
+// SESSION
+// ==========================================
 
 async function checkLogin() {
 
-    const { data } =
+    const {
+        data
+    } =
         await supabaseClient.auth
             .getSession();
 
@@ -423,9 +467,9 @@ async function checkLogin() {
 checkLogin();
 
 
-// ==================================================
+// ==========================================
 // LOAD FRIENDS
-// ==================================================
+// ==========================================
 
 async function loadFriends() {
 
@@ -436,10 +480,13 @@ async function loadFriends() {
 
 
     friendsList.innerHTML =
-        '<p class="empty">Loading friends...</p>';
+        '<p class="empty">Loading...</p>';
 
 
-    const { data, error } =
+    const {
+        data,
+        error
+    } =
         await supabaseClient
             .from("friendships")
             .select("friend_id")
@@ -460,10 +507,13 @@ async function loadFriends() {
     }
 
 
-    if (!data || data.length === 0) {
+    if (
+        !data ||
+        data.length === 0
+    ) {
 
         friendsList.innerHTML =
-            '<p class="empty">No friends yet</p>';
+            '<p class="empty">No friends yet.<br>Add your first friend!</p>';
 
         return;
     }
@@ -472,9 +522,13 @@ async function loadFriends() {
     friendsList.innerHTML = "";
 
 
-    for (const friendship of data) {
+    for (
+        const friendship of data
+    ) {
 
-        const { data: friend } =
+        const {
+            data: friend
+        } =
             await supabaseClient
                 .from("profiles")
                 .select(
@@ -487,18 +541,24 @@ async function loadFriends() {
                 .single();
 
 
-        if (!friend) continue;
+        if (!friend) {
+
+            continue;
+
+        }
 
 
-        const friendElement =
-            document.createElement("div");
+        const element =
+            document.createElement(
+                "div"
+            );
 
 
-        friendElement.className =
+        element.className =
             "friend";
 
 
-        friendElement.innerHTML = `
+        element.innerHTML = `
 
             <div class="avatar">
                 ${escapeHTML(
@@ -525,15 +585,16 @@ async function loadFriends() {
         `;
 
 
-        friendElement.onclick = () => {
+        element.onclick =
+            function() {
 
-            openChat(friend);
+                openChat(friend);
 
-        };
+            };
 
 
         friendsList.appendChild(
-            friendElement
+            element
         );
 
     }
@@ -541,14 +602,16 @@ async function loadFriends() {
 }
 
 
-// ==================================================
-// ADD FRIEND
-// ==================================================
+// ==========================================
+// ADD FRIEND MODAL
+// ==========================================
 
 function openAddFriend() {
 
     document
-        .getElementById("addFriendModal")
+        .getElementById(
+            "addFriendModal"
+        )
         .classList.remove("hidden");
 
 }
@@ -557,11 +620,17 @@ function openAddFriend() {
 function closeAddFriend() {
 
     document
-        .getElementById("addFriendModal")
+        .getElementById(
+            "addFriendModal"
+        )
         .classList.add("hidden");
 
 }
 
+
+// ==========================================
+// ADD FRIEND
+// ==========================================
 
 async function addFriend() {
 
@@ -571,13 +640,17 @@ async function addFriend() {
                 "friendUsername"
             )
             .value
-            .trim();
+            .trim()
+            .toLowerCase();
 
 
     const message =
         document.getElementById(
             "friendMessage"
         );
+
+
+    message.innerText = "";
 
 
     if (!username) {
@@ -589,7 +662,10 @@ async function addFriend() {
     }
 
 
-    const { data: friend, error } =
+    const {
+        data: friend,
+        error
+    } =
         await supabaseClient
             .from("profiles")
             .select(
@@ -631,9 +707,9 @@ async function addFriend() {
     }
 
 
-    // Check if already friends
-
-    const { data: alreadyFriend } =
+    const {
+        data: alreadyFriend
+    } =
         await supabaseClient
             .from("friendships")
             .select("id")
@@ -657,9 +733,9 @@ async function addFriend() {
     }
 
 
-    // Check existing request
-
-    const { data: existingRequest } =
+    const {
+        data: existingRequest
+    } =
         await supabaseClient
             .from("friend_requests")
             .select(
@@ -684,7 +760,7 @@ async function addFriend() {
         ) {
 
             message.innerText =
-                "Friend request already sent.";
+                "Request already sent.";
 
             return;
         }
@@ -692,7 +768,9 @@ async function addFriend() {
     }
 
 
-    const { error: requestError } =
+    const {
+        error: requestError
+    } =
         await supabaseClient
             .from("friend_requests")
             .insert({
@@ -718,20 +796,25 @@ async function addFriend() {
     }
 
 
+    message.style.color =
+        "#22a06b";
+
     message.innerText =
         "Friend request sent! 🎉";
 
 }
 
 
-// ==================================================
+// ==========================================
 // FRIEND REQUESTS
-// ==================================================
+// ==========================================
 
 async function openRequests() {
 
     document
-        .getElementById("requestsModal")
+        .getElementById(
+            "requestsModal"
+        )
         .classList.remove("hidden");
 
 
@@ -745,11 +828,14 @@ async function openRequests() {
         "Loading...";
 
 
-    const { data, error } =
+    const {
+        data,
+        error
+    } =
         await supabaseClient
             .from("friend_requests")
             .select(
-                "id, sender_id, status, created_at"
+                "id, sender_id, status"
             )
             .eq(
                 "receiver_id",
@@ -770,10 +856,13 @@ async function openRequests() {
     }
 
 
-    if (!data || data.length === 0) {
+    if (
+        !data ||
+        data.length === 0
+    ) {
 
         requestsList.innerHTML =
-            "<p>No new friend requests.</p>";
+            '<p class="empty">No new requests.</p>';
 
         return;
     }
@@ -782,9 +871,13 @@ async function openRequests() {
     requestsList.innerHTML = "";
 
 
-    for (const request of data) {
+    for (
+        const request of data
+    ) {
 
-        const { data: sender } =
+        const {
+            data: sender
+        } =
             await supabaseClient
                 .from("profiles")
                 .select(
@@ -797,11 +890,17 @@ async function openRequests() {
                 .single();
 
 
-        if (!sender) continue;
+        if (!sender) {
+
+            continue;
+
+        }
 
 
         const item =
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
 
 
         item.className =
@@ -849,25 +948,42 @@ async function openRequests() {
         `;
 
 
-        requestsList.appendChild(item);
+        requestsList.appendChild(
+            item
+        );
 
     }
 
 }
 
 
-// ==================================================
+function closeRequests() {
+
+    document
+        .getElementById(
+            "requestsModal"
+        )
+        .classList.add("hidden");
+
+}
+
+
+// ==========================================
 // ACCEPT REQUEST
-// ==================================================
+// ==========================================
 
 async function acceptRequest(
     requestId,
     senderId
 ) {
 
-    // First check if friendship already exists
+    /*
+       Check whether friendship already exists.
+    */
 
-    const { data: existingFriendship } =
+    const {
+        data: existing
+    } =
         await supabaseClient
             .from("friendships")
             .select("id")
@@ -882,11 +998,11 @@ async function acceptRequest(
             .maybeSingle();
 
 
-    // If already friends, don't insert again
+    if (!existing) {
 
-    if (!existingFriendship) {
-
-        const { error } =
+        const {
+            error
+        } =
             await supabaseClient
                 .from("friendships")
                 .insert({
@@ -910,9 +1026,13 @@ async function acceptRequest(
     }
 
 
-    // Check reverse friendship
+    /*
+       Reverse friendship.
+    */
 
-    const { data: reverseFriendship } =
+    const {
+        data: reverse
+    } =
         await supabaseClient
             .from("friendships")
             .select("id")
@@ -927,9 +1047,11 @@ async function acceptRequest(
             .maybeSingle();
 
 
-    if (!reverseFriendship) {
+    if (!reverse) {
 
-        const { error } =
+        const {
+            error
+        } =
             await supabaseClient
                 .from("friendships")
                 .insert({
@@ -953,9 +1075,13 @@ async function acceptRequest(
     }
 
 
-    // Update request
+    /*
+       Update request.
+    */
 
-    const { error: updateError } =
+    const {
+        error: updateError
+    } =
         await supabaseClient
             .from("friend_requests")
             .update({
@@ -967,10 +1093,6 @@ async function acceptRequest(
             .eq(
                 "id",
                 requestId
-            )
-            .eq(
-                "receiver_id",
-                currentUser.id
             );
 
 
@@ -989,15 +1111,17 @@ async function acceptRequest(
 }
 
 
-// ==================================================
-// REJECT REQUEST
-// ==================================================
+// ==========================================
+// REJECT
+// ==========================================
 
 async function rejectRequest(
     requestId
 ) {
 
-    const { error } =
+    const {
+        error
+    } =
         await supabaseClient
             .from("friend_requests")
             .update({
@@ -1009,10 +1133,6 @@ async function rejectRequest(
             .eq(
                 "id",
                 requestId
-            )
-            .eq(
-                "receiver_id",
-                currentUser.id
             );
 
 
@@ -1029,52 +1149,68 @@ async function rejectRequest(
 }
 
 
-function closeRequests() {
-
-    document
-        .getElementById("requestsModal")
-        .classList.add("hidden");
-
-}
-
-
-// ==================================================
+// ==========================================
 // OPEN CHAT
-// ==================================================
+// ==========================================
 
 async function openChat(friend) {
 
-    currentFriend = friend;
+    currentFriend =
+        friend;
+
+
+    /*
+       MOBILE:
+       Open chat full screen.
+    */
+
+    document
+        .querySelector(".chat")
+        .classList.add(
+            "mobile-open"
+        );
 
 
     document
-        .getElementById("welcomeChat")
+        .getElementById(
+            "welcomeChat"
+        )
         .classList.add("hidden");
 
 
     document
-        .getElementById("chatHeader")
+        .getElementById(
+            "chatHeader"
+        )
         .classList.remove("hidden");
 
 
     document
-        .getElementById("messages")
+        .getElementById(
+            "messages"
+        )
         .classList.remove("hidden");
 
 
     document
-        .getElementById("messageBox")
+        .getElementById(
+            "messageBox"
+        )
         .classList.remove("hidden");
 
 
     document
-        .getElementById("chatFriendName")
+        .getElementById(
+            "chatFriendName"
+        )
         .innerText =
         friend.full_name;
 
 
     document
-        .getElementById("chatFriendStatus")
+        .getElementById(
+            "chatFriendStatus"
+        )
         .innerText =
         "● Online";
 
@@ -1086,13 +1222,47 @@ async function openChat(friend) {
 }
 
 
-// ==================================================
+// ==========================================
+// CLOSE MOBILE CHAT
+// ==========================================
+
+function closeMobileChat() {
+
+    document
+        .querySelector(".chat")
+        .classList.remove(
+            "mobile-open"
+        );
+
+
+    currentFriend =
+        null;
+
+
+    if (messageChannel) {
+
+        supabaseClient
+            .removeChannel(
+                messageChannel
+            );
+
+        messageChannel =
+            null;
+    }
+
+}
+
+
+// ==========================================
 // LOAD MESSAGES
-// ==================================================
+// ==========================================
 
 async function loadMessages() {
 
-    if (!currentFriend) return;
+    if (!currentFriend) {
+
+        return;
+    }
 
 
     const container =
@@ -1105,7 +1275,10 @@ async function loadMessages() {
         '<p class="empty">Loading messages...</p>';
 
 
-    const { data, error } =
+    const {
+        data,
+        error
+    } =
         await supabaseClient
             .from("messages")
             .select("*")
@@ -1142,7 +1315,7 @@ async function loadMessages() {
     ) {
 
         container.innerHTML =
-            '<p class="empty">No messages yet. Say hello 👋</p>';
+            '<p class="empty">No messages yet 👋</p>';
 
         return;
     }
@@ -1158,11 +1331,13 @@ async function loadMessages() {
 }
 
 
-// ==================================================
+// ==========================================
 // DISPLAY MESSAGE
-// ==================================================
+// ==========================================
 
-function displayMessage(message) {
+function displayMessage(
+    message
+) {
 
     const container =
         document.getElementById(
@@ -1181,7 +1356,9 @@ function displayMessage(message) {
 
 
     const wrapper =
-        document.createElement("div");
+        document.createElement(
+            "div"
+        );
 
 
     wrapper.className =
@@ -1205,7 +1382,9 @@ function displayMessage(message) {
 
 
     const bubble =
-        document.createElement("div");
+        document.createElement(
+            "div"
+        );
 
 
     bubble.className =
@@ -1234,7 +1413,7 @@ function displayMessage(message) {
 
         <small style="
             display:block;
-            opacity:0.65;
+            opacity:.6;
             margin-top:4px;
             font-size:10px;
         ">
@@ -1256,9 +1435,9 @@ function displayMessage(message) {
 }
 
 
-// ==================================================
+// ==========================================
 // SEND MESSAGE
-// ==================================================
+// ==========================================
 
 async function sendMessage() {
 
@@ -1287,7 +1466,10 @@ async function sendMessage() {
     input.disabled = true;
 
 
-    const { data, error } =
+    const {
+        data,
+        error
+    } =
         await supabaseClient
             .from("messages")
             .insert({
@@ -1329,9 +1511,9 @@ async function sendMessage() {
 }
 
 
-// ==================================================
-// ENTER SEND
-// ==================================================
+// ==========================================
+// ENTER TO SEND
+// ==========================================
 
 document.addEventListener(
     "keydown",
@@ -1353,9 +1535,9 @@ document.addEventListener(
 );
 
 
-// ==================================================
+// ==========================================
 // REALTIME
-// ==================================================
+// ==========================================
 
 function subscribeToMessages() {
 
@@ -1372,7 +1554,7 @@ function subscribeToMessages() {
     messageChannel =
         supabaseClient
             .channel(
-                "chat-" +
+                "messages-" +
                 currentUser.id +
                 "-" +
                 currentFriend.id
@@ -1430,9 +1612,9 @@ function subscribeToMessages() {
 }
 
 
-// ==================================================
+// ==========================================
 // SCROLL
-// ==================================================
+// ==========================================
 
 function scrollMessages() {
 
@@ -1455,20 +1637,21 @@ function scrollMessages() {
 }
 
 
-// ==================================================
-// SEARCH FRIENDS
-// ==================================================
+// ==========================================
+// FRIEND SEARCH
+// ==========================================
 
 document
     .getElementById(
         "friendSearch"
     )
-    ?.addEventListener(
+    .addEventListener(
         "input",
         function() {
 
             const search =
-                this.value.toLowerCase();
+                this.value
+                    .toLowerCase();
 
 
             const friends =
@@ -1499,9 +1682,9 @@ document
     );
 
 
-// ==================================================
-// HTML SECURITY
-// ==================================================
+// ==========================================
+// SECURITY
+// ==========================================
 
 function escapeHTML(text) {
 
