@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>MyMessenger</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- ================= LOGIN / REGISTER ================= -->
+
+    <div id="authPage" class="auth-container">
+
+        <div class="logo">💬</div>
+
+        <h1>MyMessenger</h1>
+
+        <p class="subtitle">
+            Private chat with your friends
+        </p>
+
+
+        <!-- LOGIN -->
+
+        <div id="loginBox" class="auth-box">
+
+            <h2>Welcome Back</h2>
+
+            <input
+                type="email"
+                id="loginEmail"
+                placeholder="Email"
+            >
+
+            <input
+                type="password"
+                id="loginPassword"
+                placeholder="Password"
+            >
+
+            <button onclick="login()">
+                Login
+            </button>
+
+            <p id="loginMessage"></p>
+
+            <p class="switch">
+                Don't have an account?
+                <span onclick="showRegister()">
+                    Create Account
+                </span>
+            </p>
+
+        </div>
+
+
+        <!-- REGISTER -->
+
+        <div id="registerBox" class="auth-box hidden">
+
+            <h2>Create Account</h2>
+
+            <input
+                type="text"
+                id="registerUsername"
+                placeholder="Username"
+            >
+
+            <input
+                type="text"
+                id="registerName"
+                placeholder="Your Name"
+            >
+
+            <input
+                type="email"
+                id="registerEmail"
+                placeholder="Email"
+            >
+
+            <input
+                type="password"
+                id="registerPassword"
+                placeholder="Password"
+            >
+
+            <button onclick="register()">
+                Create Account
+            </button>
+
+            <p id="registerMessage"></p>
+
+            <p class="switch">
+                Already have an account?
+                <span onclick="showLogin()">
+                    Login
+                </span>
+            </p>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ================= MESSENGER ================= -->
+
+    <div id="messengerPage" class="messenger hidden">
+
+        <!-- SIDEBAR -->
+
+        <aside class="sidebar">
+
+            <div class="sidebar-header">
+
+                <div>
+                    <h2>💬 MyMessenger</h2>
+                    <p id="myUsername">
+                        Loading...
+                    </p>
+                </div>
+
+                <button
+                    class="logout-btn"
+                    onclick="logout()"
+                >
+                    ↪
+                </button>
+
+            </div>
+
+
+            <!-- SEARCH -->
+
+            <div class="search-box">
+
+                <input
+                    type="text"
+                    id="friendSearch"
+                    placeholder="Search friends..."
+                >
+
+            </div>
+
+
+            <!-- FRIENDS -->
+
+            <div class="friends-title">
+                FRIENDS
+            </div>
+
+            <div id="friendsList">
+
+                <p class="empty">
+                    No friends yet
+                </p>
+
+            </div>
+
+
+            <!-- ADD FRIEND -->
+
+            <button
+                class="add-friend-btn"
+                onclick="openAddFriend()"
+            >
+                ➕ Add Friend
+            </button>
+
+
+            <!-- REQUESTS -->
+
+            <button
+                class="requests-btn"
+                onclick="openRequests()"
+            >
+                📩 Friend Requests
+            </button>
+
+        </aside>
+
+
+        <!-- CHAT AREA -->
+
+        <main class="chat-area">
+
+            <div
+                id="welcomeChat"
+                class="welcome-chat"
+            >
+
+                <div class="big-chat-icon">
+                    💬
+                </div>
+
+                <h2>
+                    Welcome to MyMessenger
+                </h2>
+
+                <p>
+                    Select a friend to start chatting.
+                </p>
+
+            </div>
+
+
+            <!-- CHAT HEADER -->
+
+            <div
+                id="chatHeader"
+                class="chat-header hidden"
+            >
+
+                <div>
+
+                    <h3 id="chatFriendName">
+                        Friend
+                    </h3>
+
+                    <p id="chatFriendStatus">
+                        Offline
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- MESSAGES -->
+
+            <div
+                id="messages"
+                class="messages hidden"
+            >
+            </div>
+
+
+            <!-- MESSAGE INPUT -->
+
+            <div
+                id="messageBox"
+                class="message-box hidden"
+            >
+
+                <input
+                    type="text"
+                    id="messageInput"
+                    placeholder="Type a message..."
+                >
+
+                <button onclick="sendMessage()">
+                    ➤
+                </button>
+
+            </div>
+
+        </main>
+
+    </div>
+
+
+
+    <!-- ================= ADD FRIEND MODAL ================= -->
+
+    <div
+        id="addFriendModal"
+        class="modal hidden"
+    >
+
+        <div class="modal-box">
+
+            <h2>➕ Add Friend</h2>
+
+            <p>
+                Enter your friend's username.
+            </p>
+
+            <input
+                type="text"
+                id="friendUsername"
+                placeholder="Username"
+            >
+
+            <p id="friendMessage"></p>
+
+            <button onclick="addFriend()">
+                Send Request
+            </button>
+
+            <button
+                class="cancel-btn"
+                onclick="closeAddFriend()"
+            >
+                Cancel
+            </button>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ================= FRIEND REQUEST MODAL ================= -->
+
+    <div
+        id="requestsModal"
+        class="modal hidden"
+    >
+
+        <div class="modal-box">
+
+            <h2>📩 Friend Requests</h2>
+
+            <div id="requestsList">
+                Loading...
+            </div>
+
+            <button
+                class="cancel-btn"
+                onclick="closeRequests()"
+            >
+                Close
+            </button>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- SUPABASE -->
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
